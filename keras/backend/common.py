@@ -5,7 +5,7 @@ _FLOATX = 'float32'
 _EPSILON = 10e-8
 _IMAGE_DATA_FORMAT = 'channels_last'
 
-_IMAGE_DATA_FORMATS = {'channels_last', 'channels_first'}:
+_IMAGE_DATA_FORMATS = {'channels_last', 'channels_first'}
 
 
 def epsilon():
