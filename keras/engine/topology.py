@@ -602,7 +602,7 @@ class Layer(object):
             inputs_ls = _to_list(inputs)
             output_ls_copy = []
             for x in output_ls:
-                if x in inputs_ls:
+                if K.list_contains(inputs_ls, x):
                     x = K.identity(x)
                 output_ls_copy.append(x)
             if len(output_ls_copy) == 1:
@@ -1772,7 +1772,7 @@ class Container(Layer):
                 layer = node.outbound_layer
                 if layer:
                     for x in node.input_tensors:
-                        if x not in computable_tensors:
+                        if not K.list_contains(computable_tensors, x):
                             raise RuntimeError(
                                 'Graph disconnected: '
                                 'cannot obtain value for tensor ' +

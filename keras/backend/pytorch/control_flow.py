@@ -1,6 +1,3 @@
-from .session import learning_phase
-
-
 def rnn(step_function, inputs, initial_states,
         go_backwards=False, mask=None, constants=None,
         unroll=False, input_length=None):

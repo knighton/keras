@@ -2,6 +2,7 @@ from .conv import *
 from .data import *
 from .elementwise import *
 from .higher_order import *
+from .learning_phase import *
 from .linalg import *
 from .loss import *
 from .nn import *

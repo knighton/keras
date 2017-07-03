@@ -162,3 +162,11 @@ def random_normal_variable(shape, mean, scale, dtype=None, name=None,
 def count_params(x):
     return x.numel()
 
+
+def list_contains(items, x):
+    for item in items:
+        if item.size() != x.size():
+            continue
+        if (item == x).sum().data.cpu().numpy()[0] == x.numel():
+            return True
+    return False
