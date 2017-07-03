@@ -5,6 +5,8 @@ _FLOATX = 'float32'
 _EPSILON = 10e-8
 _IMAGE_DATA_FORMAT = 'channels_last'
 
+_IMAGE_DATA_FORMATS = {'channels_last', 'channels_first'}:
+
 
 def epsilon():
     """Returns the value of the fuzz
@@ -123,6 +125,14 @@ def image_data_format():
     return _IMAGE_DATA_FORMAT
 
 
+def normalizee_image_data_format(data_format):
+    if data_format is None:
+        return _IMAGE_DATA_FORMAT
+    else:
+        assert data_format in _IMAGE_DATA_FORMATS
+        return data_format
+
+
 def set_image_data_format(data_format):
     """Sets the value of the data format convention.
 
@@ -140,7 +150,7 @@ def set_image_data_format(data_format):
     ```
     """
     global _IMAGE_DATA_FORMAT
-    if data_format not in {'channels_last', 'channels_first'}:
+    if data_format not in _IMAGE_DATA_FORMATS:
         raise ValueError('Unknown data_format:', data_format)
     _IMAGE_DATA_FORMAT = str(data_format)
 

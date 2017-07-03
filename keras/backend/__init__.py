@@ -9,6 +9,7 @@ from .common import set_epsilon
 from .common import set_floatx
 from .common import cast_to_floatx
 from .common import image_data_format
+from .common import _IMAGE_DATA_FORMATS
 from .common import set_image_data_format
 
 # Obtain Keras base dir path: either ~/.keras or /tmp.
@@ -19,6 +20,8 @@ _keras_dir = os.path.join(_keras_base_dir, '.keras')
 
 # Default backend: TensorFlow.
 _BACKEND = 'tensorflow'
+
+_BACKENDS = {'cntk', 'pytorch', 'tensorflow', 'theano'}
 
 # Attempt to read Keras config file.
 _config_path = os.path.expanduser(os.path.join(_keras_dir, 'keras.json'))
@@ -32,10 +35,10 @@ if os.path.exists(_config_path):
     _epsilon = _config.get('epsilon', epsilon())
     assert isinstance(_epsilon, float)
     _backend = _config.get('backend', _BACKEND)
-    assert _backend in {'theano', 'tensorflow', 'cntk'}
+    assert _backend in _BACKENDS
     _image_data_format = _config.get('image_data_format',
                                      image_data_format())
-    assert _image_data_format in {'channels_last', 'channels_first'}
+    assert _image_data_format in _IMAGE_DATA_FORMATS
 
     set_floatx(_floatx)
     set_epsilon(_epsilon)
@@ -68,13 +71,16 @@ if not os.path.exists(_config_path):
 # Set backend based on KERAS_BACKEND flag, if applicable.
 if 'KERAS_BACKEND' in os.environ:
     _backend = os.environ['KERAS_BACKEND']
-    assert _backend in {'theano', 'tensorflow', 'cntk'}
+    assert _backend in _BACKENDS
     _BACKEND = _backend
 
 # Import backend functions.
 if _BACKEND == 'cntk':
     sys.stderr.write('Using CNTK backend\n')
     from .cntk_backend import *
+elif _BACKEND == 'pytorch':
+    sys.stderr.write('Using PyTorch backend\n')
+    from .pytorch import *
 elif _BACKEND == 'theano':
     sys.stderr.write('Using Theano backend.\n')
     from .theano_backend import *
