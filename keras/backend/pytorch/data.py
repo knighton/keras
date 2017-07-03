@@ -1,6 +1,8 @@
 from collections import Counter
 from contextlib import contextmanager
+import numpy as np
 import torch
+from torch.autograd import Variable
 
 from .type import normalize_dtype
 
@@ -37,7 +39,7 @@ def name_scope(name):
 
 
 def _prepare_name(name, default):
-    prefix = '/'.join(NAME_SCOPE_STACK)
+    prefix = '/'.join(_NAME_SCOPE_STACK)
     if name is None:
         return prefix + '/' + default
     return prefix + '/' + name
@@ -46,10 +48,17 @@ def _prepare_name(name, default):
 def variable(value, dtype=None, name=None):
     dtype = normalize_dtype(dtype)
     name = _prepare_name(name, 'variable')
-    np_value = np.asarray(value, dtype=dtype)
-    tensor = torch.from_numpy(np_value)
+    if isinstance(value, Variable):
+        tensor = value.data.cpu()
+    elif isinstance(value, torch._TensorBase):
+        tensor = value
+    elif isinstance(value, np.ndarray):
+        tensor = torch.from_numpy(np_value)
+    else:
+        np_value = np.asarray(value, dtype=dtype)
+        tensor = torch.from_numpy(np_value)
     v = Variable(tensor, requires_grad=True)
-    v._keras_shape = value.shape
+    v._keras_shape = tuple(tensor.size())
     v._uses_learning_phase = False
     return v
 
@@ -75,12 +84,11 @@ def is_keras_tensor(x):
 
 def placeholder(shape=None, ndim=None, dtype=None, sparse=False, name=None):
     assert shape
-    for dim in shape:
-        assert dim
+    fake_shape = map(lambda dim: 1 if dim is None else dim, shape)
     dtype = normalize_dtype(dtype)
     assert not sparse
     name = _prepare_name(name, 'placeholder')
-    np_value = np.zeros(shape, dtype)
+    np_value = np.zeros(fake_shape, dtype)
     tensor = torch.from_numpy(np_value)
     v = Variable(tensor, requires_grad=False)
     v._keras_shape = shape

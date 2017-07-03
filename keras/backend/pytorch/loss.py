@@ -10,7 +10,7 @@ def binary_crossentropy(output, target, from_logits=False):
     if not from_logits:
         output = output.clamp(epsilon(), 1 - epsilon())
         output = (output / (1 - output)).log()
-    return y_true @ y_pred.log() - (1 - y_true) @ (1 - y_pred).log()
+    return y_true.mm(y_pred.log()) - (1 - y_true).mm((1 - y_pred).log())
 
 
 def categorical_crossentropy(output, target, from_logits=False):

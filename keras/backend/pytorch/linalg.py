@@ -1,5 +1,5 @@
 def dot(x, y):
-    return x @ y
+    return x.mm(y)
 
 
 def batch_dot(x, y, axes=None):

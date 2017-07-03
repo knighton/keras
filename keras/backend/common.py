@@ -125,7 +125,7 @@ def image_data_format():
     return _IMAGE_DATA_FORMAT
 
 
-def normalizee_image_data_format(data_format):
+def normalize_image_data_format(data_format):
     if data_format is None:
         return _IMAGE_DATA_FORMAT
     else:
